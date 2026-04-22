@@ -24,7 +24,9 @@ import type { ChannelStore } from "./store.js";
 import { createMomTools, setUploadFunction } from "./tools/index.js";
 
 // Hardcoded model for now - TODO: make configurable (issue #63)
-const model = getModel("anthropic", "claude-sonnet-4-5");
+const model = getModel("anthropic", "claude-sonnet-4-6");
+model.id = process.env.ANTHROPIC_MODEL_ID || "claude-sonnet-4-6";
+if (process.env.ANTHROPIC_BASE_URL) model.baseUrl = process.env.ANTHROPIC_BASE_URL;
 
 export interface PendingMessage {
 	userName: string;
@@ -43,6 +45,9 @@ export interface AgentRunner {
 }
 
 async function getAnthropicApiKey(authStorage: AuthStorage): Promise<string> {
+	const envKey = process.env.ANTHROPIC_API_KEY;
+	if (envKey) return envKey;
+
 	const key = await authStorage.getApiKey("anthropic");
 	if (!key) {
 		throw new Error(
