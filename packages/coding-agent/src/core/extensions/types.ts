@@ -39,7 +39,7 @@ import type {
 	OverlayOptions,
 	TUI,
 } from "@mariozechner/pi-tui";
-import type { Static, TSchema } from "@sinclair/typebox";
+import type { Static, TSchema } from "typebox";
 import type { Theme } from "../../modes/interactive/theme/theme.js";
 import type { BashResult } from "../bash-executor.js";
 import type { CompactionPreparation, CompactionResult } from "../compaction/index.js";
@@ -141,6 +141,9 @@ export interface ExtensionUIContext {
 
 	/** Set the working/loading message shown during streaming. Call with no argument to restore default. */
 	setWorkingMessage(message?: string): void;
+
+	/** Show or hide the built-in interactive working loader row during streaming. */
+	setWorkingVisible(visible: boolean): void;
 
 	/**
 	 * Configure the interactive working indicator shown during streaming.
@@ -479,7 +482,7 @@ type AnyToolDefinition = ToolDefinition<any, any, any>;
 export function defineTool<TParams extends TSchema, TDetails = unknown, TState = any>(
 	tool: ToolDefinition<TParams, TDetails, TState>,
 ): ToolDefinition<TParams, TDetails, TState> & AnyToolDefinition {
-	return tool;
+	return tool as ToolDefinition<TParams, TDetails, TState> & AnyToolDefinition;
 }
 
 // ============================================================================
